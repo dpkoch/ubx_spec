@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<ubx>
+  <enums>
+    <enum name="GNSS_ID">
+      <entry value="0" name="GPS"/>
+      <entry value="1" name="SBAS"/>
+      <entry value="2" name="Galileo"/>
+      <entry value="3" name="BeiDou"/>
+      <entry value="4" name="IMES"/>
+      <entry value="5" name="QZSS"/>
+      <entry value="6" name="GLONASS"/>
+    </enum>
+  </enums>
+
+  <classes>
+    <class name="NAV" id="0x01">
+      <message name="PVT" id="0x07" length="92">
+        <field name="iTOW" offset="0" format="U4" unit="ms">GPS time of week of the navigation epoch</field>
+        <field name="year" offset="4" format="U2" unit="y">Year (UTC)</field>
+      </message>
+
+      <message name="SAT" id="0x35" length="8 + 12*numSvs">
+        <field name="iTOW" offset="0" format="U4" unit="ms">GPS time of week of the navigation epoch</field>
+        <field name="version" offset="4" format="U1">Message version (1 for this version)</field>
+        <field name="numSvs" offset="5" format="U1">Number of satellites</field>
+        <field name="reserved1" offset="6" format="U1[2]" reserved="true">Reserved</field>
+        <repeated times="numSvs" length="12">
+          <field name="gnssId" offset="8" format="U1" enum="GNSS_ID">GNSS identifier</field>
+          <field name="svId" offset="9" format="U1">Satellite Identifier</field>
+          <field name="cno" offset="10" format="U1" unit="dBHz">Carrier to noise ratio (signal strength)</field>
+          <field name="elev" offset="11" format="I1" unit="deg" min="-90" max="90">Elevation (range: +/-90), unknown if out of range</field>
+          <field name="azim" offset="12" format="I2" unit="deg" min="0" max="360">Azimuth (range 0-360), unknown if elevation is out of range</field>
+          <field name="prRes" offset="14" format="I2" scale="0.1" unit="m">Pseudo range residual</field>
+          <bitmask name="flags" offset="16" format="X4">
+            <entry name="qualityInd" begin="0" end="2">Signal quality indicator</entry>
+            <entry name="svUsed" begin="3">SV is currently being used for navigation</entry>
+            <entry name="health" begin="4" end="5">SV health flag</entry>
+            <entry name="diffCorr" begin="6">Differential correction data is available for this SV</entry>
+            <entry name="smoothed" begin="7">Carrier smoothed pseudorange used</entry>
+            <entry name="orbitSource" begin="8" end="10">Orbit source</entry>
+            <entry name="ephAvail" begin="11">Ephemeris is available for this SV</entry>
+            <entry name="almAvail" begin="12">Almanac is available for this SV</entry>
+            <entry name="anoAvail" begin="13">AssistNow Offline data is available for this SV</entry>
+            <entry name="aopAvail" begin="14">AssistNow Autonomous data is available for this SV</entry>
+            <entry name="sbasCorrUsed" begin="16">SBAS corrections have been used for this SV</entry>
+            <entry name="rtcmCorrUsed" begin="17">RTCM corrections have been used for this SV</entry>
+            <entry name="prCorrUsed" begin="20">Pseudorange corrections have been used for this SV</entry>
+            <entry name="crCorrUsed" begin="21">Carrier range corrections have been used for this SV</entry>
+            <entry name="doCorrUsed" begin="22">Range rate (Doppler) corrections have been used for this SV</entry>
+          </bitmask>
+        </repeated>
+      </message>
+    </class>
+
+    <class id="0x02" name="RXM"></class>
+
+    <class id="0x04" name="INF"></class>
+
+    <class name="ACK" id="0x05">
+      <message name="ACK" id="0x01" length="2">
+        <field name="clsID" offset="0" format="U1">Class ID of the Acknowledged Message</field>
+        <field name="msgID" offset="1" format="U1">Message ID of the Acknowledged Message</field>
+      </message>
+
+      <message name="NAK" id="0x00" length="2">
+        <field name="clsID" offset="0" format="U1">Class ID of the Not-Acknowledged Message</field>
+        <field name="msgID" offset="1" format="U1">Message ID of the Not-Acknowledged Message</field>
+      </message>
+    </class>
+
+    <class name="CFG" id="0x06"></class>
+    <class name="UPD" id="0x09"></class>
+    <class name="MON" id="0x0A"></class>
+    <class name="AID" id="0x0B"></class>
+    <class name="TIM" id="0x0D"></class>
+    <class name="ESF" id="0x10"></class>
+    <class name="MGA" id="0x13"></class>
+    <class name="LOG" id="0x21"></class>
+    <class name="SEC" id="0x27"></class>
+    <class name="HNR" id="0x28"></class>
+  </classes>
+</ubx>
